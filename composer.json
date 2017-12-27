@@ -22,7 +22,10 @@
     "require": {
         "php": "^7.1",
 
-        "sylius/sylius": "^1.0.4"
+        "sylius/sylius": "^1.0.4",
+        "hwi/oauth-bundle": "^0.6.0",
+        "php-http/guzzle6-adapter": "^1.1",
+        "php-http/httplug-bundle": "^1.8"
     },
     "require-dev": {
         "behat/behat": "^3.2",

@@ -79,6 +79,15 @@ security:
                 invalidate_session: false
                 success_handler: sylius.handler.shop_user_logout
             anonymous: true
+            oauth:
+                resource_owners:
+                    torocoin: "/connect/login/check-torocoin"
+                login_path: "/%locale%/login"
+                use_forward: false
+                failure_path: "/%locale%/login"
+
+                oauth_user_provider:
+                    service: sylius.oauth.user_provider
 
         dev:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/

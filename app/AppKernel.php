@@ -32,6 +32,9 @@ class AppKernel extends Kernel
             new \Sylius\Bundle\AdminApiBundle\SyliusAdminApiBundle(),
 
             new \AppBundle\AppBundle(),
+
+            new Http\HttplugBundle\HttplugBundle(),
+            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
         ];
 
         return array_merge(parent::registerBundles(), $bundles);

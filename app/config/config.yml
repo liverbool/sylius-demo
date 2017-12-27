@@ -10,6 +10,8 @@ imports:
     - { resource: "parameters.yml" }
     - { resource: "security.yml" }
 
+    - { resource: "config/connect.yml" }
+
 parameters:
     locale: en_US
 

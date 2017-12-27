@@ -1,0 +1,8 @@
+hwi_oauth_redirect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/redirect.xml"
+
+hwi_oauth_connect:
+    resource: "@HWIOAuthBundle/Resources/config/routing/connect.xml"
+
+torocoin:
+    path: "/login/check-torocoin"
