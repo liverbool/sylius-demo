@@ -1,0 +1,8 @@
+dos:
+    form:
+        gateway_configuration:
+            omise_live_mode: Live Mode?
+            omise_3d_secure: Enable 3d Secure?
+            omise_public_key: Public Key
+            omise_secret_key: Secret Key
+            omise_country_code: Your country

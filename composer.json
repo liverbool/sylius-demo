@@ -25,7 +25,8 @@
         "sylius/sylius": "^1.0.4",
         "hwi/oauth-bundle": "^0.6.0",
         "php-http/guzzle6-adapter": "^1.1",
-        "php-http/httplug-bundle": "^1.8"
+        "php-http/httplug-bundle": "^1.8",
+        "phpmob/omise": "dev-master"
     },
     "require-dev": {
         "behat/behat": "^3.2",
@@ -70,6 +71,8 @@
     },
     "autoload": {
         "psr-4": {
+            "Dos\\SyliusOmisePlugin\\": "src/Dos/SyliusOmisePlugin/src",
+            "Dos\\Payum\\Omise\\": "src/Dos/Payum/Omise",
             "AppBundle\\": "src/AppBundle/"
         },
         "classmap": ["app/AppKernel.php", "app/AppCache.php"]

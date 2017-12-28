@@ -1,0 +1,33 @@
+{
+    "name": "dos/omise-payum",
+    "type": "project",
+    "description": "The Omise Payum extension. Rapid extensino development",
+    "keywords": ["payment", "omise"],
+    "homepage": "http://github.com/liverbool",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "liverbool",
+            "email": "liverbool@gmail.com"
+        }
+    ],
+    "require": {
+        "payum/core": "^1.3"
+    },
+    "require-dev": {
+        "payum/core": "^1.3@dev",
+        "php-http/guzzle6-adapter": "^1.0"
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "autoload": {
+        "psr-0": { "Dos\\Payum\\Omise": "" }
+    },
+    "target-dir": "Dos/Payum/Omise",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1-dev"
+        }
+    }
+}

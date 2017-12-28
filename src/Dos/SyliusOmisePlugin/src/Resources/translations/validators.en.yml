@@ -1,0 +1,8 @@
+dos:
+    gateway_config:
+        omise_public_key:
+            not_blank: Omise public key should be blank.
+        omise_secret_key:
+            not_blank: Omise secret key should be blank.
+        omise_country_code:
+            not_blank: Omise country should be blank.

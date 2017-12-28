@@ -1,0 +1,4 @@
+suites:
+    main:
+        namespace: Dos\SyliusOmisePlugin
+        psr4_prefix: Dos\SyliusOmisePlugin

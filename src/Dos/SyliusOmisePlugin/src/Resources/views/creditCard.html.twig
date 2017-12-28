@@ -1,0 +1,183 @@
+{% extends "@SyliusShop/layout.html.twig" %}
+{% set fm = firstModel %}
+
+{% block _creditCard %}
+    <form action="" method="post" id="omiseCreditCard">
+        <div id="token_errors"></div>
+
+        <input type="hidden" name="omiseToken">
+
+        <div>
+            Name<br>
+            <input type="text" data-omise="holder_name" value="TEST">
+        </div>
+        <div>
+            Number<br>
+            <input type="text" data-omise="number" value="4111 1111 1111 1111">
+        </div>
+        <div>
+            Date<br>
+            <input type="text" data-omise="expiration_month" size="4" value="10"> /
+            <input type="text" data-omise="expiration_year" size="8" value="18">
+        </div>
+        <div>
+            Security Code<br>
+            <input type="text" data-omise="security_code" size="8" value="111">
+        </div>
+
+        <input type="submit" id="create_token">
+    </form>
+{% endblock %}
+
+{% block _internetBanking %}
+    <form action="" method="post">
+        {% for code, bank in fm.supportedBanks %}
+            {% set id = 'internet_banking_' ~ code %}
+            <div>
+                <div class="ui radio checkbox">
+                    <input id="{{ id }}" type="radio" name="omiseToken" value="{{ code }}">
+                    <label for="{{ id }}">{{ bank.label|trans }}</label>
+                </div>
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">{{ "Submit" }}</button>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <h1>{{ "Omise Payment" }}</h1>
+
+    {% if fm.invalid|default(false) %}
+        {% import '@SyliusUi/Macro/messages.html.twig' as msg %}
+        {{ msg.error("Please provide payment information.") }}
+    {% endif %}
+
+    <div class="ui top attached tabular menu">
+        <div class="active item" data-tab="tab-credit-card">{{ "Credit Card" }}</div>
+        <div class="item" data-tab="tab-internet-banking">{{ "Internet Banking" }}</div>
+    </div>
+    <div class="ui bottom attached active tab segment" data-tab="tab-credit-card">
+        {{ block('_creditCard') }}
+    </div>
+    <div class="ui bottom attached tab segment" data-tab="tab-internet-banking">
+        {{ block('_internetBanking') }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="https://cdn.omise.co/omise.js"></script>
+    <script>
+        Omise.setPublicKey("{{ fm.publicKey }}");
+
+        $(function () {
+            var ua = navigator.userAgent.toLowerCase();
+            var isAndroid = ua.indexOf("android") > -1;
+            var $input = $('[data-omise="number"]');
+            var $icon = $('.cc-icon');
+            var cardTypes = {
+                mastercard: {
+                    className: 'cc-icon--master'
+                },
+                visa: {
+                    className: 'cc-icon--visa'
+                }
+            };
+
+            // Enable for aal but Android
+            $input.on("keyup", function () {
+                var _ccInput = $(this).val();
+
+                // VISA
+                if (_ccInput.charAt(0) === '4') {
+                    changeIcon(cardTypes.visa);
+                }
+
+                // MASTER CARD
+                else if (_ccInput.substring(0, 2) >= 50 && _ccInput.substring(0, 2) <= 55) {
+                    changeIcon(cardTypes.mastercard);
+                }
+
+                // OTHER - Remove icons and reset mask
+                else {
+                    removeIcon();
+                }
+
+                // Check for empty value
+                if (_ccInput.length === 0) {
+                    removeIcon();
+                }
+            });
+
+            function removeIcon() {
+                $icon.removeClass('active');
+            }
+
+            function changeIcon(obj) {
+                $icon.removeClass('active');
+                $('.' + obj.className).addClass('active');
+
+                // Set new input mask
+                if (!isAndroid) {
+                    defaultMask();
+                }
+            }
+
+            function defaultMask() {
+                /*$input.inputmask({
+                    mask: '9999 9999 9999 9999',
+                    showMaskOnFocus: false,
+                    showMaskOnHover: true,
+                    placeholder: ""
+                });*/
+            }
+
+            // Init
+            defaultMask();
+
+            $("#omiseCreditCard").submit(function () {
+                var form = $(this);
+
+                $tokenError = $("#token_errors").hide();
+
+                form.find("input[type=submit]").prop("disabled", true);
+
+                var card = {
+                    "name": form.find("[data-omise=holder_name]").val(),
+                    "number": form.find("[data-omise=number]").val().split(' ').join(""),
+                    "expiration_month": form.find("[data-omise=expiration_month]").val(),
+                    "expiration_year": form.find("[data-omise=expiration_year]").val(),
+                    "security_code": form.find("[data-omise=security_code]").val()
+                };
+
+                Omise.createToken("card", card, function (statusCode, res) {
+                    if (res.object === "error") {
+                        var errorMessage = "SOMETHING WRONG!";
+
+                        if (res.object === "error") {
+                            errorMessage = res.message;
+                        }
+
+                        $tokenError.show().html(errorMessage).addClass('alert alert-danger');
+
+                        // Re-enable the submit button.
+                        form.find("input[type=submit]").prop("disabled", false);
+                    } else {
+                        // Then fill the omiseToken.
+                        form.find("[name=omiseToken]").val(res.id);
+
+                        // Remove card number from form before submiting to server.
+                        form.find("[data-omise=number]").val("");
+                        form.find("[data-omise=security_code]").val("");
+
+                        form.get(0).submit();
+                    }
+                });
+
+                // Prevent the form from being submitted;
+                return false;
+            });
+        })
+    </script>
+{% endblock %}

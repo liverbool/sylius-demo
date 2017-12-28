@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd4d5844f90e6a6a3ca16726e76b87f3",
+    "content-hash": "75c0ff9e1c0c82b8cc7902e8c3b93dbd",
     "packages": [
         {
             "name": "behat/transliterator",
@@ -4402,6 +4402,68 @@
                 "set"
             ],
             "time": "2015-05-17T12:39:23+00:00"
+        },
+        {
+            "name": "phpmob/omise",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpmob/omise.git",
+                "reference": "ff9a8ed6d7132b2966c0fda27325f266602a379d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpmob/omise/zipball/ff9a8ed6d7132b2966c0fda27325f266602a379d",
+                "reference": "ff9a8ed6d7132b2966c0fda27325f266602a379d",
+                "shasum": ""
+            },
+            "require": {
+                "doctrine/inflector": "^1.1",
+                "php": "^7.1",
+                "php-http/client-implementation": "^1.0",
+                "php-http/discovery": "^1.0",
+                "php-http/httplug": "^1.0",
+                "psr/http-message": "^1.0",
+                "symfony/options-resolver": "^3.3"
+            },
+            "require-dev": {
+                "php-http/guzzle6-adapter": "^1.1",
+                "phpspec/phpspec": "^4.0",
+                "phpunit/phpunit": "^5.6",
+                "sylius-labs/coding-standard": "^1.0"
+            },
+            "suggest": {
+                "php-http/guzzle6-adapter": "To use built-in \\PhpMob\\Omise\\Client\\GuzzleHttpClient."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PhpMob\\Omise\\": "src"
+                },
+                "classmap": []
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ishmael Doss",
+                    "email": "nukboon@gmail.com"
+                }
+            ],
+            "description": "Just alternative Omise api client",
+            "homepage": "https://github.com/phpmob/omise",
+            "keywords": [
+                "omise",
+                "omise-api"
+            ],
+            "time": "2017-11-03T09:16:16+00:00"
         },
         {
             "name": "phpoption/phpoption",
@@ -9766,7 +9828,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "phpmob/omise": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

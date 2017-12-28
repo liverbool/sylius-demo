@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="Dos\SyliusOmisePlugin\Form\Type\OmiseGatewayConfigurationType">
+            <tag name="sylius.gateway_configuration_type" type="omise" label="Omise Payment"/>
+            <tag name="form.type"/>
+        </service>
+        <service class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
+            <argument type="string">Dos\Payum\Omise\OmiseGatewayFactory</argument>
+            <tag name="payum.gateway_factory_builder" factory="omise"/>
+        </service>
+        <service class="Dos\SyliusOmisePlugin\ObtainCreditCardActionBuilder"
+                 decorates="payum.action.obtain_credit_card_builder"
+                 parent="payum.action.obtain_credit_card_builder"
+        />
+        <service class="Dos\SyliusOmisePlugin\Action\FlashDisplayErrorAction">
+            <argument type="service" id="session.flash_bag" on-invalid="null"/>
+            <tag name="payum.action" factory="omise"/>
+        </service>
+    </services>
+</container>
