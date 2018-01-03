@@ -59,9 +59,22 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
     /**
      * {@inheritdoc}
      */
+    public function getAccessToken($grant, array $options = [])
+    {
+        $token = parent::getAccessToken($grant, $options);
+
+        // store token
+        $this->tokenProvider->storeToken($token);
+
+        return $token;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getAccessTokenUsingAuthorizationCode(string $code): AccessToken
     {
-        return parent::getAccessToken('authorization_code', ['code' => $code]);
+        return $this->getAccessToken('authorization_code', ['code' => $code]);
     }
 
     /**
@@ -69,7 +82,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
      */
     public function getAccessTokenUsingRefreshToken(string $refreshToken): AccessToken
     {
-        return parent::getAccessToken('refresh_token', ['refresh_token' => $refreshToken]);
+        return $this->getAccessToken('refresh_token', ['refresh_token' => $refreshToken]);
     }
 
     /**
@@ -77,7 +90,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
      */
     public function getAccessTokenUsingClientCredentials(): AccessToken
     {
-        return parent::getAccessToken('client_credentials');
+        return $this->getAccessToken('client_credentials');
     }
 
     /**
@@ -85,10 +98,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
      */
     public function refreshToken(): void
     {
-        $token = $this->getAccessTokenUsingRefreshToken($this->tokenProvider->getRefreshToken());
-        // store token
-        $this->tokenProvider->setAccessToken($token->getToken());
-        $this->tokenProvider->setRefreshToken($token->getRefreshToken());
+        $this->getAccessTokenUsingRefreshToken($this->tokenProvider->getToken()->getRefreshToken());
     }
 
     /**
@@ -104,7 +114,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
         $uri = preg_replace('/([^:])(\/{2,})/', '$1/', $this->getResourceEndpoint() . $path);
 
         $response = $this->getResponse(
-            $this->getAuthenticatedRequest($method, $uri, $this->tokenProvider->getAccessToken(), [
+            $this->getAuthenticatedRequest($method, $uri, $this->tokenProvider->getToken()->getToken(), [
                 'body' => !empty($data) ? json_encode($data) : null,
                 'headers' => $headers,
             ])

@@ -2,29 +2,17 @@
 
 namespace Toro\Pay\Provider;
 
+use League\OAuth2\Client\Token\AccessToken;
+
 interface TokenProviderInterface
 {
     /**
-     * @return string
+     * @return AccessToken
      */
-    public function getAccessToken(): ?string;
+    public function getToken(): AccessToken;
 
     /**
-     * Store the access token
-     *
-     * @param null|string $token
+     * @param AccessToken $token
      */
-    public function setAccessToken(?string $token = null): void;
-
-    /**
-     * @return string
-     */
-    public function getRefreshToken(): ?string;
-
-    /**
-     * Store the refresh token
-     *
-     * @param null|string $token
-     */
-    public function setRefreshToken(?string $token = null): void;
+    public function storeToken(AccessToken $token): void;
 }

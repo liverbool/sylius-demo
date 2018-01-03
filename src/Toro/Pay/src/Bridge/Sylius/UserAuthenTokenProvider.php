@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Bridge\Sylius;
 
+use League\OAuth2\Client\Token\AccessToken;
 use Sylius\Component\User\Model\UserInterface;
 use Sylius\Component\User\Model\UserOAuthInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -41,9 +42,9 @@ final class UserAuthenTokenProvider implements TokenProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return null|string
      */
-    public function getAccessToken(): ?string
+    private function getAccessToken(): ?string
     {
         $user = $this->getUserOAuth();
 
@@ -51,21 +52,41 @@ final class UserAuthenTokenProvider implements TokenProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * @return null|string
      */
-    public function getRefreshToken(): ?string
+    private function getRefreshToken(): ?string
     {
         $user = $this->getUserOAuth();
 
         return null === $user ? null : $user->getRefreshToken();
     }
 
-    public function setAccessToken(?string $token = null): void
+    /**
+     * @return null|string
+     */
+    private function getResourceOwinerId(): ?string
     {
-        // TODO: Implement setAccessToken() method.
+        $user = $this->getUserOAuth();
+
+        return null === $user ? null : (string) $user->getUser();
     }
 
-    public function setRefreshToken(?string $token = null): void
+    /**
+     * {@inheritdoc}
+     */
+    public function getToken(): AccessToken
+    {
+        return new AccessToken([
+            'access_token' => $this->getAccessToken(),
+            'refresh_token' => $this->getRefreshToken(),
+            'resource_owner_id' => $this->getResourceOwinerId(),
+        ]);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function storeToken(AccessToken $token): void
     {
         // TODO: Implement setRefreshToken() method.
     }
