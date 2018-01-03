@@ -6,7 +6,7 @@ namespace Tests\Toro\Pay\Bridge\Sylius;
 
 use PHPUnit\Framework\TestCase;
 use Tests\Toro\Pay\MockerTrait;
-use Toro\Pay\Bridge\Sylius\ResourceOwnerProvider;
+use Toro\Pay\Bridge\Sylius\OwnerProvider;
 
 class UserAuthenTokenProviderTest extends TestCase
 {
@@ -15,7 +15,7 @@ class UserAuthenTokenProviderTest extends TestCase
     public function testInvalidUserType()
     {
         $tokenStorage = $this->createTokenStorage($this->createSymfonyUser());
-        $resolver = new ResourceOwnerProvider($tokenStorage);
+        $resolver = new OwnerProvider($tokenStorage);
 
         $this->assertEquals(null, $resolver->getAccessToken());
         $this->assertEquals(null, $resolver->getRefreshToken());
@@ -24,7 +24,7 @@ class UserAuthenTokenProviderTest extends TestCase
     public function testNullUserType()
     {
         $tokenStorage = $this->createTokenStorage(null);
-        $resolver = new ResourceOwnerProvider($tokenStorage);
+        $resolver = new OwnerProvider($tokenStorage);
 
         $this->assertEquals(null, $resolver->getAccessToken());
         $this->assertEquals(null, $resolver->getRefreshToken());
@@ -33,7 +33,7 @@ class UserAuthenTokenProviderTest extends TestCase
     public function testValidUserTypeAndHaveToken()
     {
         $tokenStorage = $this->createTokenStorage($this->createSyliusUserWithOAuth());
-        $resolver = new ResourceOwnerProvider($tokenStorage);
+        $resolver = new OwnerProvider($tokenStorage);
 
         $this->assertEquals('test_access_token', $resolver->getAccessToken());
         $this->assertEquals('test_refresh_token', $resolver->getRefreshToken());

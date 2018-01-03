@@ -10,12 +10,12 @@ use Toro\Pay\Exception\InvalidRequestArgumentException;
 use Toro\Pay\Exception\InvalidResponseException;
 use Toro\Pay\Hydrator\Hydration;
 use Toro\Pay\Hydrator\HydrationInterface;
-use Toro\Pay\Provider\ToroPayProviderInterface;
+use Toro\Pay\Provider\ResourceProviderInterface;
 
 abstract class AbstractApi
 {
     /**
-     * @var ToroPayProviderInterface
+     * @var ResourceProviderInterface
      */
     protected $provider;
 
@@ -25,24 +25,24 @@ abstract class AbstractApi
     private $hydration;
 
     /**
-     * @param ToroPayProviderInterface $provider
+     * @param ResourceProviderInterface $provider
      * @param array $options
      * @param HydrationInterface $hydration
      */
-    public function __construct(ToroPayProviderInterface $provider, array $options, HydrationInterface $hydration = null)
+    public function __construct(ResourceProviderInterface $provider, array $options, HydrationInterface $hydration = null)
     {
         $this->provider = $provider;
         $this->hydration = $hydration ?: new Hydration();
     }
 
     /**
-     * @param ToroPayProviderInterface $provider
+     * @param ResourceProviderInterface $provider
      * @param array $options
      * @param HydrationInterface|null $hydration
      *
      * @return static
      */
-    public static function create(ToroPayProviderInterface $provider, array $options, HydrationInterface $hydration = null)
+    public static function create(ResourceProviderInterface $provider, array $options, HydrationInterface $hydration = null)
     {
         static $instance;
 

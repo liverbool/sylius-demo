@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInterface;
 use Toro\Pay\Client\GuzzleHttpClient;
 use Toro\Pay\Client\HttpClientInterface;
-use Toro\Pay\Provider\ResourceOwnerProviderInterface;
+use Toro\Pay\Provider\OwnerProviderInterface;
 
 /**
  * @mixin TestCase
@@ -94,7 +94,7 @@ trait MockerTrait
      * @param null|string $accessToken
      * @param null|string $refreshToken
      *
-     * @return \PHPUnit\Framework\MockObject\MockObject|ResourceOwnerProviderInterface
+     * @return \PHPUnit\Framework\MockObject\MockObject|OwnerProviderInterface
      */
     protected function createTokenProvider(?string $accessToken = null, ?string $refreshToken = null)
     {
@@ -102,7 +102,7 @@ trait MockerTrait
             $accessToken = 'SampleToken';
         }
 
-        $mock = $this->getMockBuilder(ResourceOwnerProviderInterface::class)->getMock();
+        $mock = $this->getMockBuilder(OwnerProviderInterface::class)->getMock();
 
         $mock
             ->expects($this->any())
