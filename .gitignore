@@ -11,17 +11,17 @@
 /web/js
 /web/media
 
-/bin/*
-!/bin/console
-!/bin/symfony_requirements
+bin/*
+!bin/console
+!bin/symfony_requirements
 
-/vendor
-/node_modules
+vendor
+node_modules
 
-/etc/build/*
-!/etc/build/.gitkeep
+etc/build/*
+!etc/build/.gitkeep
 
-/behat.yml
-/phpunit.xml
-/phpspec.yml
+behat.yml
+phpunit.xml
+phpspec.yml
 .web-server-pid

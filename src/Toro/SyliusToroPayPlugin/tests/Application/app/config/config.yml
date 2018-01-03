@@ -1,5 +1,6 @@
-# This file is part of the Sylius package.
-# (c) Paweł Jędrzejewski
+parameters:
+    locale: en_US
+    secret: "Heron is the best animal in the world!"
 
 imports:
     - { resource: "@SyliusCoreBundle/Resources/config/app/config.yml" }
@@ -7,17 +8,11 @@ imports:
     - { resource: "@SyliusShopBundle/Resources/config/app/config.yml" }
     - { resource: "@SyliusAdminApiBundle/Resources/config/app/config.yml" }
 
-    - { resource: "parameters.yml" }
-    - { resource: "security.yml" }
-
-    - { resource: "config/connect.yml" }
-
-parameters:
-    locale: en_US
+    - { resource: "../../../../vendor/sylius/sylius/app/config/security.yml" }
 
 framework:
-    translator: { fallbacks: ["%locale%"] }
-    secret: "%secret%"
+    translator: { fallbacks: ["%locale%", "en"] }
+    secret: "%secret"
     router:
         resource: "%kernel.root_dir%/config/routing.yml"
         strict_requirements: "%kernel.debug%"
@@ -28,30 +23,21 @@ framework:
     default_locale: "%locale%"
     trusted_proxies: ~
     session:
-        handler_id: ~
+        storage_id: session.storage.mock_file
+    test: ~
+
+swiftmailer:
+    disable_delivery: true
+    logging: true
+    spool:
+        type: file
+        path: "%kernel.cache_dir%/spool"
 
 doctrine:
     dbal:
-        driver: "%database_driver%"
-        host: "%database_host%"
-        port: "%database_port%"
-        dbname: "%database_name%"
-        user: "%database_user%"
-        password: "%database_password%"
-        server_version: "5.5"
+        driver: "pdo_sqlite"
+        path: "%kernel.root_dir%/../var/db.sql"
         charset: UTF8
-
-doctrine_migrations:
-    dir_name: "%kernel.root_dir%/migrations"
-    namespace: Sylius\Migrations
-    table_name: sylius_migrations
-    name: Sylius Migrations
-
-swiftmailer:
-    transport: "%mailer_transport%"
-    host: "%mailer_host%"
-    username: "%mailer_user%"
-    password: "%mailer_password%"
 
 fos_rest:
     exception: ~
@@ -65,4 +51,6 @@ fos_rest:
             - { path: '^/api', priorities: ['json', 'xml'], fallback_format: json, prefer_extension: true }
             - { path: '^/', stop: true }
 
-sylius_toro_pay: ~
+sylius_theme:
+    sources:
+        test: ~

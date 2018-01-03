@@ -32,6 +32,7 @@ class AppKernel extends Kernel
             new \Sylius\Bundle\AdminApiBundle\SyliusAdminApiBundle(),
 
             new \Dos\SyliusOmisePlugin\DosSyliusOmisePlugin(),
+            new \Toro\SyliusToroPayPlugin\SyliusToroPayPlugin(),
 
             new \AppBundle\AppBundle(),
 
