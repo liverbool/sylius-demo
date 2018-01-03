@@ -87,7 +87,7 @@ final class OwnerProvider implements OwnerProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function storeToken(AccessToken $token, ResourceOwnerInterface $owner): void
+    public function store(AccessToken $token, ResourceOwnerInterface $owner): void
     {
         // TODO: Implement setRefreshToken() method.
     }

@@ -16,5 +16,5 @@ interface OwnerProviderInterface
      * @param AccessToken $token
      * @param ResourceOwnerInterface $owner
      */
-    public function storeToken(AccessToken $token, ResourceOwnerInterface $owner): void;
+    public function store(AccessToken $token, ResourceOwnerInterface $owner): void;
 }
