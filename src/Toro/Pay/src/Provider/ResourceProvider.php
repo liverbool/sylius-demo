@@ -7,7 +7,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Toro\Pay\ToroPay;
 
-class ToroPayProvider extends GenericProvider implements ToroPayProviderInterface
+class ResourceProvider extends GenericProvider implements ResourceProviderInterface
 {
     /**
      * @var bool
@@ -25,7 +25,7 @@ class ToroPayProvider extends GenericProvider implements ToroPayProviderInterfac
     private $apiVersion = 'v1';
 
     /**
-     * @var ResourceOwnerProviderInterface
+     * @var OwnerProviderInterface
      */
     private $ownerProvider;
 
@@ -43,7 +43,7 @@ class ToroPayProvider extends GenericProvider implements ToroPayProviderInterfac
         $resolver->setAllowedTypes('sandbox', 'boolean');
         $resolver->setAllowedTypes('client_secret', 'string');
         $resolver->setAllowedTypes('client_id', 'string');
-        $resolver->setAllowedTypes('owner_provider', ResourceOwnerProviderInterface::class);
+        $resolver->setAllowedTypes('owner_provider', OwnerProviderInterface::class);
         $resolver->setAllowedTypes('api_version', 'string');
         $resolver->setAllowedTypes('locale_code', 'string');
     }

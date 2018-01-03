@@ -9,10 +9,10 @@ use League\OAuth2\Client\Token\AccessToken;
 use Sylius\Component\User\Model\UserInterface;
 use Sylius\Component\User\Model\UserOAuthInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Toro\Pay\Provider\ResourceOwnerProviderInterface;
+use Toro\Pay\Provider\OwnerProviderInterface;
 use Toro\Pay\ToroPay;
 
-final class ResourceOwnerProvider implements ResourceOwnerProviderInterface
+final class OwnerProvider implements OwnerProviderInterface
 {
     /**
      * @var TokenStorageInterface
