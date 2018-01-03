@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Bridge\Sylius;
 
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Sylius\Component\User\Model\UserInterface;
 use Sylius\Component\User\Model\UserOAuthInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Toro\Pay\Provider\TokenProviderInterface;
+use Toro\Pay\Provider\ResourceOwnerProviderInterface;
 use Toro\Pay\ToroPay;
 
-final class UserAuthenTokenProvider implements TokenProviderInterface
+final class ResourceOwnerProvider implements ResourceOwnerProviderInterface
 {
     /**
      * @var TokenStorageInterface
@@ -86,7 +87,7 @@ final class UserAuthenTokenProvider implements TokenProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function storeToken(AccessToken $token): void
+    public function storeToken(AccessToken $token, ResourceOwnerInterface $owner): void
     {
         // TODO: Implement setRefreshToken() method.
     }

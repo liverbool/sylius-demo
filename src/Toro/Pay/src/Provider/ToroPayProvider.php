@@ -7,7 +7,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Toro\Pay\ToroPay;
 
-class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProviderInterface
+class ToroPayProvider extends GenericProvider implements ToroPayProviderInterface
 {
     /**
      * @var bool
@@ -25,16 +25,16 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
     private $apiVersion = 'v1';
 
     /**
-     * @var TokenProviderInterface
+     * @var ResourceOwnerProviderInterface
      */
-    private $tokenProvider;
+    private $ownerProvider;
 
     /**
      * @param OptionsResolver $resolver
      */
     private function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setRequired(['client_secret', 'client_id', 'token_provider']);
+        $resolver->setRequired(['client_secret', 'client_id', 'owner_provider']);
 
         $resolver->setDefault('sandbox', $this->sandbox);
         $resolver->setDefault('locale_code', $this->localeCode);
@@ -43,7 +43,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
         $resolver->setAllowedTypes('sandbox', 'boolean');
         $resolver->setAllowedTypes('client_secret', 'string');
         $resolver->setAllowedTypes('client_id', 'string');
-        $resolver->setAllowedTypes('token_provider', TokenProviderInterface::class);
+        $resolver->setAllowedTypes('owner_provider', ResourceOwnerProviderInterface::class);
         $resolver->setAllowedTypes('api_version', 'string');
         $resolver->setAllowedTypes('locale_code', 'string');
     }
@@ -64,7 +64,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
         $token = parent::getAccessToken($grant, $options);
 
         // store token
-        $this->tokenProvider->storeToken($token);
+        $this->ownerProvider->storeToken($token, $this->getResourceOwner($token));
 
         return $token;
     }
@@ -98,7 +98,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
      */
     public function refreshToken(): void
     {
-        $this->getAccessTokenUsingRefreshToken($this->tokenProvider->getToken()->getRefreshToken());
+        $this->getAccessTokenUsingRefreshToken($this->ownerProvider->getToken()->getRefreshToken());
     }
 
     /**
@@ -114,7 +114,7 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
         $uri = preg_replace('/([^:])(\/{2,})/', '$1/', $this->getResourceEndpoint() . $path);
 
         $response = $this->getResponse(
-            $this->getAuthenticatedRequest($method, $uri, $this->tokenProvider->getToken()->getToken(), [
+            $this->getAuthenticatedRequest($method, $uri, $this->ownerProvider->getToken()->getToken(), [
                 'body' => !empty($data) ? json_encode($data) : null,
                 'headers' => $headers,
             ])
@@ -132,4 +132,8 @@ class OAuth2ClientProvider extends GenericProvider implements OAuth2ClientProvid
 
         return $contentBody;
     }
+
+    // TODO:
+    // - method: Redirect the user to the authorization URL
+    // - method: handle redirect back and state validate with session storage
 }

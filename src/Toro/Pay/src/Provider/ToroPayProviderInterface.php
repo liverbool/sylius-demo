@@ -8,7 +8,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-interface OAuth2ClientProviderInterface
+interface ToroPayProviderInterface
 {
     /**
      * Builds the authorization URL.
