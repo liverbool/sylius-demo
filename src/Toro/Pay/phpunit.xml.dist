@@ -7,7 +7,7 @@
          bootstrap="vendor/autoload.php"
          failOnRisky="true"
          failOnWarning="true"
-         processIsolation="false"
+         processIsolation="true"
 >
     <testsuites>
         <testsuite name="Toro Pay Test Suite">

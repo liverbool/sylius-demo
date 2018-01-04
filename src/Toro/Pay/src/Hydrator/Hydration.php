@@ -65,13 +65,15 @@ class Hydration implements HydrationInterface
     }
 
     /**
-     * @param $className
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public static function getDomainClass($className): string
+    public static function getDomainClass($resourceName): string
     {
-        return 'Toro\\Pay\\Domain\\' . ucfirst($className === 'list' ? 'Pagination' : $className);
+        if ('error' === strtolower($resourceName)) {
+            $resourceName = Error::class;
+        }
+
+        return $resourceName;
     }
 
     /**

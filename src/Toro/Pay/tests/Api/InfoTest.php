@@ -3,18 +3,27 @@
 namespace Tests\Toro\Pay\Api;
 
 use Toro\Pay\Api\Info as Api;
+use Toro\Pay\Exception\InvalidResponseException;
 
 class InfoTest extends AbstractApiTestCase
 {
     protected $useLiveApi = true;
 
-    public function testAccessToCoinInfo()
+    /*public function testAccessToCoinInfo()
     {
-
         $provider = $this->createLiveValidResourceProvider('ScopedSampleTokenExpired');
 
-        $api = new Api($provider);
+        Api::create($provider)->getInfo();
+    }*/
 
-        dump($api->getInfo());
+    public function testAccessToCoinInfoWithForUserWhoStillHaveNoBalanceAccount()
+    {
+        $this->expectException(InvalidResponseException::class);
+        $this->expectExceptionCode(404);
+        $this->expectExceptionMessage('The "balance" has not been found');
+
+        $provider = $this->createLiveValidResourceProvider('ScopedSampleToken404');
+
+        Api::create($provider)->getInfo();
     }
 }

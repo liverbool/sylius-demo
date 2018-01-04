@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Toro\Pay\Hydrator;
 
 use Toro\Pay\AbstractFacade;
+use Toro\Pay\Domain\Error;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -23,13 +24,13 @@ class FacadeHydration extends Hydration
     /**
      * {@inheritdoc}
      */
-    public static function getDomainClass($objectName): string
+    public static function getDomainClass($resourceName): string
     {
-        if ('error' === strtolower($objectName)) {
-            return parent::getDomainClass($objectName);
+        if ('error' === strtolower($resourceName)) {
+            return Error::class;
         }
 
-        return 'Toro\\Pay\\Facade\\' . ucfirst($objectName);
+        return str_replace('Domain', 'Facade', $resourceName);
     }
 
     /**

@@ -28,11 +28,11 @@ interface HydrationInterface
     public function hydrate(array $rawData): AbstractModel;
 
     /**
-     * @param $objectName
+     * @param $resourceName
      *
      * @return string
      */
-    public static function getDomainClass($objectName);
+    public static function getDomainClass($resourceName);
 
     /**
      * @return string

@@ -8,7 +8,7 @@ use Toro\Pay\AbstractApi;
 use Toro\Pay\Exception\InvalidResponseException;
 use Toro\Pay\Domain\Info as Domain;
 
-class Info extends AbstractApi
+class UserInfo extends AbstractApi
 {
     /**
      * {@inheritdoc}
