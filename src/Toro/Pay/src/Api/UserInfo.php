@@ -6,7 +6,7 @@ namespace Toro\Pay\Api;
 
 use Toro\Pay\AbstractApi;
 use Toro\Pay\Exception\InvalidResponseException;
-use Toro\Pay\Domain\Info as Domain;
+use Toro\Pay\Domain\UserInfo as Domain;
 
 class UserInfo extends AbstractApi
 {
@@ -25,6 +25,6 @@ class UserInfo extends AbstractApi
      */
     public function getInfo()
     {
-        return $this->doRequest('GET', '/coin/info');
+        return $this->doRequest('GET', '/user/info');
     }
 }
