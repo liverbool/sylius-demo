@@ -64,4 +64,9 @@ interface ResourceProviderInterface
      * @return int
      */
     public function authorizeWebAction(?string $code = null, ?string $state = null): int;
+
+    /**
+     * @return AccessToken|null
+     */
+    public function getStoredAccessToken(): ?AccessToken;
 }

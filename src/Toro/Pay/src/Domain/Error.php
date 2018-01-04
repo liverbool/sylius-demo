@@ -18,6 +18,7 @@ use Toro\Pay\AbstractModel;
 /**
  * @property string message
  * @property string code
+ * @property mixed data
  */
 class Error extends AbstractModel
 {

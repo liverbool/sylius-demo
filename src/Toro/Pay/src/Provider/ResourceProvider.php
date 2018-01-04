@@ -209,9 +209,21 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
     /**
      * {@inheritdoc}
      */
+    public function getStoredAccessToken(): ?AccessToken
+    {
+        return $this->ownerProvider->getToken();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getResourceOwner(AccessToken $token): ResourceOwnerInterface
     {
-        return parent::getResourceOwner($token);
+        $owner = parent::getResourceOwner($token);
+
+        $this->ownerProvider->store($token, $owner);
+
+        return $owner;
     }
 
     /**

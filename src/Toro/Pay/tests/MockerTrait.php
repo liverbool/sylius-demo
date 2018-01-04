@@ -157,7 +157,7 @@ trait MockerTrait
         return $mock;
     }
 
-    public function createAccessToken(?string $accessToken = null)
+    public function createAccessToken(string $accessToken)
     {
         return new AccessToken([
             'access_token' => $accessToken,

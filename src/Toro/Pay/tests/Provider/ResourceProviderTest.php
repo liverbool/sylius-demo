@@ -40,7 +40,15 @@ class ResourceProviderTest extends TestCase
         new ResourceProvider([]);
     }
 
-    public function XtestAuthorizeWebAction()
+    public function testGetResourceOwner()
+    {
+        $provider = $this->createLiveValidResourceProvider();
+        $owner = $provider->getResourceOwner($this->createAccessToken('ScopedSampleToken'));
+
+        self::assertTrue(!empty($owner->getId()));
+    }
+
+    public function testAuthorizeWebAction()
     {
         $testAccessToken = 'testAccessToken';
         $ownerProvider = new OwnerProvider($this->createTokenStorage($this->createSyliusUserWithOAuth()));
