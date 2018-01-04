@@ -26,10 +26,9 @@ abstract class AbstractApi
 
     /**
      * @param ResourceProviderInterface $provider
-     * @param array $options
      * @param HydrationInterface $hydration
      */
-    public function __construct(ResourceProviderInterface $provider, array $options, HydrationInterface $hydration = null)
+    public function __construct(ResourceProviderInterface $provider, HydrationInterface $hydration = null)
     {
         $this->provider = $provider;
         $this->hydration = $hydration ?: new Hydration();
@@ -37,12 +36,11 @@ abstract class AbstractApi
 
     /**
      * @param ResourceProviderInterface $provider
-     * @param array $options
      * @param HydrationInterface|null $hydration
      *
      * @return static
      */
-    public static function create(ResourceProviderInterface $provider, array $options, HydrationInterface $hydration = null)
+    public static function create(ResourceProviderInterface $provider, HydrationInterface $hydration = null)
     {
         static $instance;
 
@@ -50,7 +48,7 @@ abstract class AbstractApi
             return $instance;
         }
 
-        return $instance = new static($provider, $options, $hydration);
+        return $instance = new static($provider, $hydration);
     }
 
     /**
@@ -67,6 +65,7 @@ abstract class AbstractApi
     {
         try {
             $contentBody = $this->provider->getResource($method, $path, $data, $headers);
+            $contentBody['resource'] = $contentBody['resource'] ?? $this->getResourceName();
 
             return $this->hydrateResponse($contentBody);
         } catch (IdentityProviderException $e) {
@@ -123,4 +122,9 @@ abstract class AbstractApi
             throw new InvalidRequestArgumentException($message);
         }
     }
+
+    /**
+     * @return string
+     */
+    abstract protected function getResourceName(): string;
 }

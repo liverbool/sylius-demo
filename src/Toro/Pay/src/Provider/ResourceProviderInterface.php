@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Toro\Pay\Provider;
 
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 
 interface ResourceProviderInterface
 {
@@ -16,7 +16,7 @@ interface ResourceProviderInterface
      * @param  AccessToken $token
      * @return ResourceOwnerInterface
      */
-    public function getResourceOwner(AccessToken $token);
+    public function getResourceOwner(AccessToken $token): ResourceOwnerInterface;
 
     /**
      * @param string $code
@@ -56,4 +56,12 @@ interface ResourceProviderInterface
      * @throws IdentityProviderException
      */
     public function getResource($method, $path, array $data = [], array $headers = []): array;
+
+    /**
+     * @param null|string $code
+     * @param null|string $state
+     *
+     * @return int
+     */
+    public function authorizeWebAction(?string $code = null, ?string $state = null): int;
 }

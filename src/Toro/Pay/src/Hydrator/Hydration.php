@@ -15,7 +15,6 @@ namespace Toro\Pay\Hydrator;
 
 use Toro\Pay\AbstractModel;
 use Toro\Pay\Domain\Error;
-use Toro\Pay\Exception\InvalidResponseException;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -25,9 +24,9 @@ class Hydration implements HydrationInterface
     /**
      * @param array $data
      *
-     * @return AbstractModel|array
+     * @return array|AbstractModel
      */
-    private function doHydrate(array &$data): array
+    private function doHydrate(array &$data)
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
@@ -35,11 +34,11 @@ class Hydration implements HydrationInterface
             }
         }
 
-        if (empty($data) || empty($data['object'])) {
-            return $data;
+        if (empty($data) || empty($data['resource'])) {
+            return (array) $data;
         }
 
-        $domain = static::getDomainClass($data['object']);
+        $domain = static::getDomainClass($data['resource']);
 
         return new $domain($data);
     }
@@ -48,8 +47,6 @@ class Hydration implements HydrationInterface
      * @param array $data
      *
      * @return AbstractModel
-     *
-     * @throws InvalidResponseException
      */
     public function hydrate(array $data): AbstractModel
     {
@@ -57,11 +54,11 @@ class Hydration implements HydrationInterface
         $assertingClass = static::getDomainAssertionClass();
 
         if (!$domain instanceof $assertingClass) {
-            throw new InvalidResponseException(new Error([
+            return new Error([
                 'code' => 'unsupported_format',
                 'message' => 'Unsupported format.',
                 'data' => $domain,
-            ]));
+            ]);
         }
 
         return $domain;

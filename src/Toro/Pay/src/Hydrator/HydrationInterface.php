@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Hydrator;
 
-use Toro\Pay\Exception\InvalidResponseException;
+use Toro\Pay\AbstractModel;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -23,11 +23,9 @@ interface HydrationInterface
     /**
      * @param array $rawData
      *
-     * @return mixed
-     *
-     * @throws InvalidResponseException
+     * @return AbstractModel
      */
-    public function hydrate(array $rawData);
+    public function hydrate(array $rawData): AbstractModel;
 
     /**
      * @param $objectName

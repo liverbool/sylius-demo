@@ -11,6 +11,14 @@ use Toro\Pay\Domain\Info as Domain;
 class Info extends AbstractApi
 {
     /**
+     * {@inheritdoc}
+     */
+    protected function getResourceName(): string
+    {
+        return 'info';
+    }
+
+    /**
      * @return Domain
      *
      * @throws InvalidResponseException

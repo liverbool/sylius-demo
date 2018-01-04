@@ -1,59 +1,101 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Toro\Pay\Provider;
 
+use GuzzleHttp\Exception\ClientException;
 use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Toro\Pay\ToroPay;
 
 class ResourceProvider extends GenericProvider implements ResourceProviderInterface
 {
     /**
-     * @var bool
-     */
-    private $sandbox = true;
-
-    /**
      * @var string
      */
-    private $localeCode = 'th';
-
-    /**
-     * @var string
-     */
-    private $apiVersion = 'v1';
+    protected $urlResource;
 
     /**
      * @var OwnerProviderInterface
      */
-    private $ownerProvider;
+    protected $ownerProvider;
+
+    public function __construct(array $options = [], array $collaborators = [])
+    {
+        $resolver = new OptionsResolver();
+        $this->configureOptions($resolver);
+
+        $options = $resolver->resolve($options);
+
+        parent::__construct($options, $collaborators);
+    }
 
     /**
      * @param OptionsResolver $resolver
      */
     private function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setRequired(['client_secret', 'client_id', 'owner_provider']);
+        $resolver->setRequired(['clientId', 'clientSecret', 'ownerProvider', 'redirectUri']);
 
-        $resolver->setDefault('sandbox', $this->sandbox);
-        $resolver->setDefault('locale_code', $this->localeCode);
-        $resolver->setDefault('api_version', $this->apiVersion);
+        $resolver->setDefault('sandbox', true);
+        $resolver->setDefault('apiVersion', 'v1');
+        $resolver->setDefault('urlAuthorize', function (Options $options) {
+            return $this->getBaseUrl($options) . '/oauth/v2/auth';
+        });
+        $resolver->setDefault('urlAccessToken', function (Options $options) {
+            return $this->getBaseUrl($options) . '/oauth/v2/token';
+        });
+        $resolver->setDefault('urlResourceOwnerDetails', function (Options $options) {
+            return $this->getBaseUrl($options) . sprintf('/api/%s/user/info', $options['apiVersion']);
+        });
+        $resolver->setDefault('urlResource', function (Options $options) {
+            return $this->getBaseUrl($options) . sprintf('/api/%s', $options['apiVersion']);
+        });
+
+        $resolver->setNormalizer('clientId', function (OptionsResolver $resolver, $value) {
+            return (string)$value;
+        });
 
         $resolver->setAllowedTypes('sandbox', 'boolean');
-        $resolver->setAllowedTypes('client_secret', 'string');
-        $resolver->setAllowedTypes('client_id', 'string');
-        $resolver->setAllowedTypes('owner_provider', OwnerProviderInterface::class);
-        $resolver->setAllowedTypes('api_version', 'string');
-        $resolver->setAllowedTypes('locale_code', 'string');
+        $resolver->setAllowedTypes('clientId', 'string');
+        $resolver->setAllowedTypes('clientSecret', 'string');
+        $resolver->setAllowedTypes('apiVersion', 'string');
+        $resolver->setAllowedTypes('redirectUri', 'string');
+        $resolver->setAllowedTypes('urlAuthorize', 'string');
+        $resolver->setAllowedTypes('urlAccessToken', 'string');
+        $resolver->setAllowedTypes('urlResourceOwnerDetails', 'string');
+        $resolver->setAllowedTypes('urlResource', 'string');
+        $resolver->setAllowedTypes('ownerProvider', OwnerProviderInterface::class);
+
+        $resolver->setAllowedValues('redirectUri', function ($value) {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        });
+        $resolver->setAllowedValues('urlResource', function ($value) {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        });
+        $resolver->setAllowedValues('urlResourceOwnerDetails', function ($value) {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        });
+        $resolver->setAllowedValues('urlAuthorize', function ($value) {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        });
+        $resolver->setAllowedValues('urlAccessToken', function ($value) {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        });
     }
 
     /**
-     * {@inheritdoc}
+     * @param Options $options
+     *
+     * @return string
      */
-    private function getResourceEndpoint(): string
+    private function getBaseUrl(Options $options)
     {
-        return ($this->sandbox ? ToroPay::ENDPOINT_SANDBOX : ToroPay::ENDPOINT) . '/' . $this->apiVersion . '/';
+        return $options['sandbox'] ? ToroPay::BASE_URL_SANDBOX : ToroPay::BASE_URL;
     }
 
     /**
@@ -64,7 +106,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $token = parent::getAccessToken($grant, $options);
 
         // store token
-        $this->ownerProvider->storeToken($token, $this->getResourceOwner($token));
+        $this->ownerProvider->store($token, $this->getResourceOwner($token));
 
         return $token;
     }
@@ -98,7 +140,15 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
      */
     public function refreshToken(): void
     {
-        $this->getAccessTokenUsingRefreshToken($this->ownerProvider->getToken()->getRefreshToken());
+        // will send empty token to server, and accept 401
+        // FIXME: find the better throw error, for dev? or for user?
+        $refreshToken = '';
+
+        if ($token = $this->ownerProvider->getToken()) {
+            $refreshToken = $token->getRefreshToken();
+        }
+
+        $this->getAccessTokenUsingRefreshToken($refreshToken);
     }
 
     /**
@@ -111,29 +161,84 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         }
 
         // remove double slash
-        $uri = preg_replace('/([^:])(\/{2,})/', '$1/', $this->getResourceEndpoint() . $path);
+        $uri = preg_replace('/([^:])(\/{2,})/', '$1/', $this->urlResource . $path);
 
-        $response = $this->getResponse(
-            $this->getAuthenticatedRequest($method, $uri, $this->ownerProvider->getToken()->getToken(), [
-                'body' => !empty($data) ? json_encode($data) : null,
-                'headers' => $headers,
-            ])
-        );
+        // will send empty token to server, and accept 401
+        // FIXME: find the better throw error, for dev? or for user?
+        $accessToken = null;
+        $refreshToken = null;
 
-        $contentBody = $this->parseJson($response);
+        if ($token = $this->ownerProvider->getToken()) {
+            $accessToken = $token->getToken();
+            $refreshToken = $token->getRefreshToken();
+        }
 
-        if (401 === $response->getStatusCode() && isset($contentBody['error'])) {
-            if ('invalid_grant' === $contentBody['error']) {
-                $this->refreshToken();
+        try {
+            $response = $this->getResponse(
+                $this->getAuthenticatedRequest($method, $uri, $accessToken, [
+                    'body' => !empty($data) ? json_encode($data) : null,
+                    'headers' => $headers,
+                ])
+            );
+        } catch (ClientException $e) {
+            $response = $e->getResponse();
+        }
 
-                return $this->getResource($method, $path, $data, $headers);
-            }
+        try {
+            $contentBody = $this->parseJson((string) $response->getBody());
+        } catch (\UnexpectedValueException $e) {
+            $contentBody = [];
+        }
+
+        // 400 - bad request, invalid request parameter
+        // 401 - access denied, invalid grant type or invalid token
+        // 403 - access denied, invalid scope
+        if (401 === $response->getStatusCode() && $refreshToken && 'invalid_grant' === @$contentBody['error']) {
+            $this->refreshToken();
+
+            return $this->getResource($method, $path, $data, $headers);
+        }
+
+        if ($response->getStatusCode() >= 400) {
+            $contentBody['resource'] = 'error';
         }
 
         return $contentBody;
     }
 
-    // TODO:
-    // - method: Redirect the user to the authorization URL
-    // - method: handle redirect back and state validate with session storage
+    /**
+     * {@inheritdoc}
+     */
+    public function getResourceOwner(AccessToken $token): ResourceOwnerInterface
+    {
+        return parent::getResourceOwner($token);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function authorizeWebAction(?string $code = null, ?string $state = null): int
+    {
+        $sessionKey = 'toro_pay_oauth2_state';
+
+        if (empty($code)) {
+            $_SESSION[$sessionKey] = $this->getState();
+
+            header('Location: ' . $this->getAuthorizationUrl());
+            return 1;
+        }
+
+        if (empty($state) || (isset($_SESSION[$sessionKey]) && $state !== $_SESSION[$sessionKey])) {
+            if (isset($_SESSION[$sessionKey])) {
+                unset($_SESSION[$sessionKey]);
+            }
+
+            return 0;
+        }
+
+        // get access token & store resource owner
+        $this->getAccessTokenUsingAuthorizationCode($code);
+
+        return 2;
+    }
 }

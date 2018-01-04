@@ -10,7 +10,7 @@ interface OwnerProviderInterface
     /**
      * @return AccessToken
      */
-    public function getToken(): AccessToken;
+    public function getToken(): ?AccessToken;
 
     /**
      * @param AccessToken $token

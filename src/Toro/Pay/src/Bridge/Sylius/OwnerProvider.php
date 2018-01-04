@@ -69,19 +69,23 @@ final class OwnerProvider implements OwnerProviderInterface
     {
         $user = $this->getUserOAuth();
 
-        return null === $user ? null : (string) $user->getUser();
+        return null === $user ? null : (string) $user->getUser()->getId();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getToken(): AccessToken
+    public function getToken(): ?AccessToken
     {
-        return new AccessToken([
-            'access_token' => $this->getAccessToken(),
-            'refresh_token' => $this->getRefreshToken(),
-            'resource_owner_id' => $this->getResourceOwinerId(),
-        ]);
+        try {
+            return new AccessToken([
+                'access_token' => $this->getAccessToken(),
+                'refresh_token' => $this->getRefreshToken(),
+                'resource_owner_id' => $this->getResourceOwinerId(),
+            ]);
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
     }
 
     /**
@@ -89,6 +93,11 @@ final class OwnerProvider implements OwnerProviderInterface
      */
     public function store(AccessToken $token, ResourceOwnerInterface $owner): void
     {
-        // TODO: Implement setRefreshToken() method.
+        if (!$user = $this->getUserOAuth()) {
+            // TODO: create new user
+        }
+
+        $user->setAccessToken($token->getToken());
+        $user->setRefreshToken($token->getRefreshToken());
     }
 }
