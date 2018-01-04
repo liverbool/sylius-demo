@@ -10,13 +10,9 @@ use Toro\Pay\Exception\InvalidResponseException;
 
 class InfoTest extends AbstractApiTestCase
 {
-    /*public function testAccessToCoinInfo()
-    {
-        $provider = $this->createLiveValidResourceProvider('ScopedSampleTokenExpired');
-
-        Api::create($provider)->getInfo();
-    }*/
-
+    /**
+     * @throws \Exception
+     */
     public function testAccessToCoinInfoWithForUserWhoStillHaveNoBalanceAccount()
     {
         $this->expectException(InvalidResponseException::class);
@@ -30,9 +26,17 @@ class InfoTest extends AbstractApiTestCase
         });
 
         $provider = $this->createResourceProvider(['access_token' => 'ScopedSampleToken404']);
-        Api::create($provider)->getInfo();
+
+        try {
+            Api::create($provider)->getInfo();
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 
+    /**
+     * @throws \Exception
+     */
     public function testAccessToCoinInfo()
     {
         HttpClientOffline::fixture('/coin/info', function (HttpResponse $res) {
@@ -40,8 +44,14 @@ class InfoTest extends AbstractApiTestCase
         });
 
         $provider = $this->createResourceProvider(['access_token' => 'ScopedSampleToken']);
-        $info = Api::create($provider)->getInfo();
 
-        self::assertInstanceOf(Info::class, $info);
+        try {
+            $info = Api::create($provider)->getInfo();
+
+            self::assertInstanceOf(Info::class, $info);
+            self::assertEquals('TOR', $info->currency);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
