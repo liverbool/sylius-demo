@@ -11,6 +11,4 @@ use Toro\Pay\Api\Info;
 class AbstractApiTestCase extends TestCase
 {
     use MockerTrait;
-
-
 }

@@ -1,0 +1,21 @@
+{
+  "id": 1,
+  "username": "web",
+  "last_login": null,
+  "email": "web@phpmob.com",
+  "full_name": "Glenna Koelpin",
+  "display_name": "Web User",
+  "status_message": null,
+  "first_name": "Glenna",
+  "last_name": "Koelpin",
+  "gender": "f",
+  "birthday": "1987-04-01",
+  "_links": {
+    "picture_70x70": {
+      "href": "http:\/\/localhost:8000\/media\/imagine\/70x70\/\/private\/users\/d79145f56813e4163998a5e2ce86c5f4.png"
+    },
+    "picture_100x100": {
+      "href": "http:\/\/localhost:8000\/media\/imagine\/100x100\/\/private\/users\/d79145f56813e4163998a5e2ce86c5f4.png"
+    }
+  }
+}

@@ -2,11 +2,13 @@
 
 namespace Tests\Toro\Pay\Provider;
 
+use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
+use Tests\Toro\Pay\HttpResponse;
 use Tests\Toro\Pay\MockerTrait;
-use Toro\Pay\Bridge\Sylius\OwnerProvider;
+use Tests\Toro\Pay\HttpClientOffline;
 use Toro\Pay\Provider\ResourceProvider;
 use Toro\Pay\Provider\ResourceProviderInterface;
 
@@ -16,9 +18,7 @@ class ResourceProviderTest extends TestCase
 
     public function testValidRequirements()
     {
-        $provider = $this->createValidResourceProvider();
-
-        self::assertInstanceOf(ResourceProviderInterface::class, $provider);
+        self::assertInstanceOf(ResourceProviderInterface::class, $this->createResourceProvider());
     }
 
     public function testInvalidRequirements()
@@ -42,19 +42,33 @@ class ResourceProviderTest extends TestCase
 
     public function testGetResourceOwner()
     {
-        $provider = $this->createLiveValidResourceProvider();
-        $owner = $provider->getResourceOwner($this->createAccessToken('ScopedSampleToken'));
+        HttpClientOffline::fixture('/user/info', function (HttpResponse $res) {
+            return $res->withJson('user_info.json');
+        });
+
+        $owner = $this->createResourceProvider()
+            ->getResourceOwner($this->createAccessToken('ScopedSampleToken'));
 
         self::assertTrue(!empty($owner->getId()));
     }
 
+    // not support live api
     public function testAuthorizeWebAction()
     {
-        $testAccessToken = 'testAccessToken';
-        $ownerProvider = new OwnerProvider($this->createTokenStorage($this->createSyliusUserWithOAuth()));
-        $provider = $this->createValidResourceProvider($ownerProvider, json_encode([
-            'access_token' => $testAccessToken,
-        ]));
+        // backup
+        $oringUseLiveApi = $this->useLiveApi;
+        $this->useLiveApi = false;
+        $testAccessToken = 'ScopedSampleToken';
+
+        HttpClientOffline::fixture('/user/info', function (HttpResponse $res) use ($testAccessToken) {
+            return $res->withJson('user_info.json');
+        });
+
+        HttpClientOffline::fixture('/oauth/v2/token', function (HttpResponse $res) use ($testAccessToken) {
+            return $res->withData(['access_token' => $testAccessToken]);
+        });
+
+        $provider = $this->createResourceProvider(['access_token' => $testAccessToken]);
 
         // 1. no code
         $result = $provider->authorizeWebAction();
@@ -74,6 +88,11 @@ class ResourceProviderTest extends TestCase
         $result = $provider->authorizeWebAction('abc', 'valid_state');
 
         self::assertEquals(2, $result);
-        self::assertEquals($testAccessToken, $ownerProvider->getToken()->getToken());
+        self::assertInstanceOf(AccessToken::class, $accessToken = $provider->getStoredAccessToken());
+
+        self::assertEquals($testAccessToken, $accessToken->getToken());
+
+        // rollback
+        $this->useLiveApi = $oringUseLiveApi;
     }
 }

@@ -4,18 +4,16 @@ declare(strict_types=1);
 
 namespace Tests\Toro\Pay;
 
-use GuzzleHttp\ClientInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use PHPUnit\Framework\TestCase;
-use Psr\Http\Message\ResponseInterface;
 use Sylius\Component\User\Model\UserInterface as SyliusUserInterface;
 use Sylius\Component\User\Model\UserOAuth;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface as SymfonyUserInterface;
-use Toro\Pay\Bridge\Sylius\OwnerProvider;
 use Toro\Pay\Provider\OwnerProviderInterface;
 use Toro\Pay\Provider\ResourceProvider;
+use Toro\Pay\Provider\ResourceProviderInterface;
 
 /**
  * @mixin TestCase
@@ -44,14 +42,12 @@ trait MockerTrait
         $mock
             ->expects($this->any())
             ->method('getOAuthAccount')
-            ->will($this->returnValue($oauth))
-        ;
+            ->will($this->returnValue($oauth));
 
         $mock
             ->expects($this->any())
             ->method('getId')
-            ->will($this->returnValue(1))
-        ;
+            ->will($this->returnValue(1));
 
         $oauth->setUser($mock);
 
@@ -87,17 +83,15 @@ trait MockerTrait
     }
 
     /**
-     * @param AccessToken|null $token
+     * @param string|null $token
      *
      * @return \PHPUnit\Framework\MockObject\MockObject|OwnerProviderInterface
      */
-    protected function createOwnerProvider(?AccessToken $token = null)
+    protected function createOwnerProvider(?string $token = null)
     {
-        if ($this->useLiveApi && !$token) {
-            $token = new AccessToken([
-                'access_token' => 'SampleToken',
-            ]);
-        }
+        $token = new AccessToken([
+            'access_token' => $token ?? 'SampleToken',
+        ]);
 
         $mock = $this->getMockBuilder(OwnerProviderInterface::class)->getMock();
 
@@ -110,53 +104,10 @@ trait MockerTrait
     }
 
     /**
-     * @param string $body
-     * @param int $statusCode
-     * @param string $reason
-     * @return \PHPUnit_Framework_MockObject_MockObject|ResponseInterface
+     * @param string $accessToken
+     *
+     * @return AccessToken
      */
-    public function createHttpResponse(string $body, int $statusCode = 200, string $reason = 'ok')
-    {
-        $mock = $this->getMockBuilder(ResponseInterface::class)->getMock();
-
-        $mock
-            ->expects($this->any())
-            ->method('getReasonPhrase')
-            ->will($this->returnValue($reason))
-        ;
-
-        $mock
-            ->expects($this->any())
-            ->method('getStatusCode')
-            ->will($this->returnValue($statusCode))
-        ;
-
-        $mock
-            ->expects($this->any())
-            ->method('getBody')
-            ->will($this->returnValue($body))
-        ;
-
-        return $mock;
-    }
-
-    /**
-     * @param null|ResponseInterface $response
-     * @return \PHPUnit_Framework_MockObject_MockObject|ClientInterface
-     */
-    public function createHttpClient(?ResponseInterface $response)
-    {
-        $mock = $this->getMockBuilder(ClientInterface::class)->getMock();
-
-        $mock
-            ->expects($this->any())
-            ->method('send')
-            ->will($this->returnValue($response))
-        ;
-
-        return $mock;
-    }
-
     public function createAccessToken(string $accessToken)
     {
         return new AccessToken([
@@ -164,34 +115,23 @@ trait MockerTrait
         ]);
     }
 
-    public function createValidResourceProvider(?OwnerProviderInterface $ownerProvider = null, string $responseBody = '')
+    /**
+     * @param array $options
+     *
+     * @return ResourceProviderInterface
+     */
+    public function createResourceProvider(array $options = [])
     {
+        HttpClientOffline::$liveMode = $this->useLiveApi;
+
         return new ResourceProvider([
             'sandbox' => true,
             'clientId' => 'demo_client',
             'clientSecret' => 'secret_demo_client',
             'redirectUri' => 'http://your-uri',
-            'ownerProvider' => $ownerProvider ?? $this->createOwnerProvider(),
+            'ownerProvider' => $this->createOwnerProvider($options['access_token'] ?? null),
         ], [
-            'httpClient' => $this->createHttpClient(
-                $this->createHttpResponse($responseBody)
-            )
-        ]);
-    }
-
-    public function createLiveValidResourceProvider(?string $accessToken = null, ?string $refreshToken = null)
-    {
-        $ownerProvider = new OwnerProvider($this->createTokenStorage($this->createSyliusUserWithOAuth(
-            $accessToken ?? 'ScopedSampleToken',
-            $refreshToken ?? 'ScopedSampleRefreshToken'
-        )));
-
-        return new ResourceProvider([
-            'sandbox' => true,
-            'clientId' => 'demo_client',
-            'clientSecret' => 'secret_demo_client',
-            'redirectUri' => 'http://your-uri',
-            'ownerProvider' => $ownerProvider,
+            'httpClient' => new HttpClientOffline()
         ]);
     }
 }
