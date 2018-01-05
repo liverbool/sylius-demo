@@ -13,8 +13,8 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Hydrator;
 
+use Doctrine\Common\Inflector\Inflector;
 use Toro\Pay\AbstractFacade;
-use Toro\Pay\Domain\Error;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -27,10 +27,10 @@ class FacadeHydration extends Hydration
     public static function getDomainClass($resourceName): string
     {
         if ('error' === strtolower($resourceName)) {
-            return Error::class;
+            return parent::getDomainClass($resourceName);
         }
 
-        return str_replace('Domain', 'Facade', $resourceName);
+        return "Toro\Pay\Facade\\" . Inflector::classify($resourceName);
     }
 
     /**

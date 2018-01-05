@@ -1,4 +1,5 @@
 {
+  "_resource": "user",
   "id": 1,
   "username": "web",
   "last_login": null,

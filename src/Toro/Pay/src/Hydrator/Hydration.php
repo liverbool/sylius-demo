@@ -13,8 +13,10 @@ declare(strict_types=1);
 
 namespace Toro\Pay\Hydrator;
 
+use Doctrine\Common\Inflector\Inflector;
 use Toro\Pay\AbstractModel;
 use Toro\Pay\Domain\Error;
+use Toro\Pay\Provider\ResourceProviderInterface;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -34,11 +36,11 @@ class Hydration implements HydrationInterface
             }
         }
 
-        if (empty($data) || empty($data['resource'])) {
+        if (empty($data) || empty($data[ResourceProviderInterface::RESOURCE_NAME_KEY])) {
             return (array) $data;
         }
 
-        $domain = static::getDomainClass($data['resource']);
+        $domain = static::getDomainClass($data[ResourceProviderInterface::RESOURCE_NAME_KEY]);
 
         return new $domain($data);
     }
@@ -69,11 +71,7 @@ class Hydration implements HydrationInterface
      */
     public static function getDomainClass($resourceName): string
     {
-        if ('error' === strtolower($resourceName)) {
-            $resourceName = Error::class;
-        }
-
-        return $resourceName;
+        return "Toro\Pay\Domain\\" . Inflector::classify($resourceName);
     }
 
     /**

@@ -10,6 +10,8 @@ use League\OAuth2\Client\Token\AccessToken;
 
 interface ResourceProviderInterface
 {
+    const RESOURCE_NAME_KEY = '_resource';
+
     /**
      * Requests and returns the resource owner of given access token.
      *

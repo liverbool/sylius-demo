@@ -200,7 +200,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         }
 
         if ($response->getStatusCode() >= 400) {
-            $contentBody['resource'] = 'error';
+            $contentBody[self::RESOURCE_NAME_KEY] = 'error';
         }
 
         return $contentBody;

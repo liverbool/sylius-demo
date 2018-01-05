@@ -7,7 +7,8 @@ namespace Toro\Pay\Domain;
 use Toro\Pay\AbstractModel;
 
 /**
- * @property string currency
+ * @property string $currency
+ * @property User $user
  */
 class Info extends AbstractModel
 {

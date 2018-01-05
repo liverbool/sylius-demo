@@ -49,7 +49,8 @@ class InfoTest extends AbstractApiTestCase
             $info = Api::create($provider)->getInfo();
 
             self::assertInstanceOf(Info::class, $info);
-            self::assertEquals('TOR', $info->currency);
+            self::assertEquals('info', $info->getResourceName());
+            self::assertEquals('user', $info->user->getResourceName());
         } catch (\Exception $e) {
             throw $e;
         }

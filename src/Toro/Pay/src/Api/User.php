@@ -6,18 +6,10 @@ namespace Toro\Pay\Api;
 
 use Toro\Pay\AbstractApi;
 use Toro\Pay\Exception\InvalidResponseException;
-use Toro\Pay\Domain\UserInfo as Domain;
+use Toro\Pay\Domain\User as Domain;
 
-class UserInfo extends AbstractApi
+class User extends AbstractApi
 {
-    /**
-     * {@inheritdoc}
-     */
-    protected function getDomainClass(): string
-    {
-        return Domain::class;
-    }
-
     /**
      * @return Domain
      *

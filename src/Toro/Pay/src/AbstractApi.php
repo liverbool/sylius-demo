@@ -65,7 +65,6 @@ abstract class AbstractApi
     {
         try {
             $contentBody = $this->provider->getResource($method, $path, $data, $headers);
-            $contentBody['resource'] = $contentBody['resource'] ?? $this->getDomainClass();
 
             return $this->hydrateResponse($contentBody);
         } catch (IdentityProviderException $e) {
@@ -122,9 +121,4 @@ abstract class AbstractApi
             throw new InvalidRequestArgumentException($message);
         }
     }
-
-    /**
-     * @return string
-     */
-    abstract protected function getDomainClass(): string;
 }

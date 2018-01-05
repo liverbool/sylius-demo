@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Toro\Pay;
 
 use Doctrine\Common\Inflector\Inflector;
+use Toro\Pay\Provider\ResourceProviderInterface;
 
 /**
  * @author Ishmael Doss <nukboon@gmail.com>
@@ -95,5 +96,13 @@ abstract class AbstractModel
     public function __set(string $name, $value): void
     {
         $this->store[Inflector::tableize($name)] = $value;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getResourceName()
+    {
+        return $this->store[ResourceProviderInterface::RESOURCE_NAME_KEY];
     }
 }

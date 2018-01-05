@@ -6,7 +6,7 @@ namespace Toro\Pay\Domain;
 
 use Toro\Pay\AbstractModel;
 
-class UserInfo extends AbstractModel
+class User extends AbstractModel
 {
 
 }
