@@ -6,7 +6,7 @@ namespace Toro\Pay\Api;
 
 use Toro\Pay\AbstractApi;
 use Toro\Pay\Exception\InvalidResponseException;
-//use Toro\Pay\Domain\User as Domain;
+use Toro\Pay\Domain\ExchangeRate as Domain;
 use Toro\Pay\Domain\Paginage;
 
 class ExchangeRate extends AbstractApi
@@ -23,5 +23,17 @@ class ExchangeRate extends AbstractApi
     public function getList(int $page = null): Paginage
     {
         return $this->getPage('/exchange-rates', $page);
+    }
+
+    /**
+     * @param int $id
+     *
+     * @return Domain
+     *
+     * @throws InvalidResponseException
+     */
+    public function show(int $id): Domain
+    {
+        return $this->doRequest('GET', '/exchange-rates/' . $id);
     }
 }

@@ -34,4 +34,24 @@ class CurrencyTest extends AbstractApiTestCase
             throw $e;
         }
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function testGetSingleCurrency()
+    {
+        HttpClientOffline::fixture('/currencies/1', function (HttpResponse $res) {
+            return $res->withJson('currency_show.json');
+        });
+
+        try {
+            $object = Api::create($this->createValidTokenResourceProvider())->show(1);
+
+            self::assertInstanceOf(Domain::class, $object);
+            self::assertEquals('currency', $object->getResourceName());
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

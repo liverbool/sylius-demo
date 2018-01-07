@@ -62,4 +62,24 @@ class ExchangeRateTest extends AbstractApiTestCase
             throw $e;
         }
     }
+
+    /**
+     * @throws \Exception
+     */
+    public function testGetSingleExchangeRate()
+    {
+        HttpClientOffline::fixture('/exchange-rates/1', function (HttpResponse $res) {
+            return $res->withJson('exchange_rates_show.json');
+        });
+
+        try {
+            $object = Api::create($this->createValidTokenResourceProvider())->show(1);
+
+            self::assertInstanceOf(Domain::class, $object);
+            self::assertEquals('exchange_rate', $object->getResourceName());
+
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
