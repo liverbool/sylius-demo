@@ -61,7 +61,7 @@ abstract class AbstractApi
      *
      * @throws InvalidResponseException
      */
-    protected function doRequest($method, $path, array $data = [], array $headers = [])
+    protected function doRequest(string $method, string $path, array $data = [], array $headers = [])
     {
         try {
             $contentBody = $this->provider->getResource($method, $path, $data, $headers);

@@ -105,4 +105,12 @@ abstract class AbstractModel
     {
         return $this->store[ResourceProviderInterface::RESOURCE_NAME_KEY];
     }
+
+    /**
+     * @return null|string
+     */
+    public function getResourceUrl(): ?string
+    {
+        return $this->store['_links']['self']['href'] ?? null;
+    }
 }

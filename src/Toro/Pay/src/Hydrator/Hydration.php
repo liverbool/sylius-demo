@@ -28,16 +28,16 @@ class Hydration implements HydrationInterface
      *
      * @return array|AbstractModel
      */
-    private function doHydrate(array &$data)
+    private function doHydrate(array $data)
     {
         foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $data[$key] = self::doHydrate($data[$key]);
+                $data[$key] = self::doHydrate($value);
             }
         }
 
         if (empty($data) || empty($data[ResourceProviderInterface::RESOURCE_NAME_KEY])) {
-            return (array) $data;
+            return (array)$data;
         }
 
         $domain = static::getDomainClass($data[ResourceProviderInterface::RESOURCE_NAME_KEY]);

@@ -5,7 +5,7 @@ namespace Tests\Toro\Pay\Api;
 use Tests\Toro\Pay\HttpClientOffline;
 use Tests\Toro\Pay\HttpResponse;
 use Toro\Pay\Api\Info as Api;
-use Toro\Pay\Domain\Info;
+use Toro\Pay\Domain\Info as Domain;
 use Toro\Pay\Exception\InvalidResponseException;
 
 class InfoTest extends AbstractApiTestCase
@@ -25,10 +25,8 @@ class InfoTest extends AbstractApiTestCase
                 ->withStatus(404);
         });
 
-        $provider = $this->createResourceProvider(['access_token' => 'ScopedSampleToken404']);
-
         try {
-            Api::create($provider)->getInfo();
+            Api::create($this->create404TokenResourceProvider())->getInfo();
         } catch (\Exception $e) {
             throw $e;
         }
@@ -43,14 +41,12 @@ class InfoTest extends AbstractApiTestCase
             return $res->withJson('coin_info.json');
         });
 
-        $provider = $this->createResourceProvider(['access_token' => 'ScopedSampleToken']);
-
         try {
-            $info = Api::create($provider)->getInfo();
+            $object = Api::create($this->createValidTokenResourceProvider())->getInfo();
 
-            self::assertInstanceOf(Info::class, $info);
-            self::assertEquals('info', $info->getResourceName());
-            self::assertEquals('user', $info->user->getResourceName());
+            self::assertInstanceOf(Domain::class, $object);
+            self::assertEquals('info', $object->getResourceName());
+            self::assertEquals('user', $object->user->getResourceName());
         } catch (\Exception $e) {
             throw $e;
         }

@@ -20,6 +20,11 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
     protected $urlResource;
 
     /**
+     * @var string
+     */
+    protected $apiVersion;
+
+    /**
      * @var OwnerProviderInterface
      */
     protected $ownerProvider;
@@ -160,6 +165,12 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
             $headers = array_replace_recursive(['Content-Type' => 'application/json; charset=utf-8'], $headers);
         }
 
+        // clean resource path
+        // 1. remove full path
+        $path = str_replace($this->urlResource, '', $path);
+        // 2. remove ^/api path
+        $path = str_replace('/api/' . $this->apiVersion, '', $path);
+
         // remove double slash
         $uri = preg_replace('/([^:])(\/{2,})/', '$1/', $this->urlResource . $path);
 
@@ -185,7 +196,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         }
 
         try {
-            $contentBody = $this->parseJson((string) $response->getBody());
+            $contentBody = $this->parseJson((string)$response->getBody());
         } catch (\UnexpectedValueException $e) {
             $contentBody = [];
         }
@@ -193,6 +204,8 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         // 400 - bad request, invalid request parameter
         // 401 - access denied, invalid grant type or invalid token
         // 403 - access denied, invalid scope
+        // 404 - not found
+        // 405 - request method not allow
         if (401 === $response->getStatusCode() && $refreshToken && 'invalid_grant' === @$contentBody['error']) {
             $this->refreshToken();
 
@@ -201,6 +214,11 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
 
         if ($response->getStatusCode() >= 400) {
             $contentBody[self::RESOURCE_NAME_KEY] = 'error';
+        }
+
+        // handle pagin api
+        if (array_key_exists('_embedded', $contentBody)) {
+            $contentBody[self::RESOURCE_NAME_KEY] = 'paginage';
         }
 
         return $contentBody;

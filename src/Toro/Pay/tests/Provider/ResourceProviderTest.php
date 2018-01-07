@@ -52,12 +52,14 @@ class ResourceProviderTest extends TestCase
         self::assertTrue(!empty($owner->getId()));
     }
 
-    // not support live api
     public function testAuthorizeWebAction()
     {
-        // backup
-        $oringUseLiveApi = $this->useLiveApi;
-        $this->useLiveApi = false;
+        if ($this->useLiveApi) {
+            self::assertTrue(true);
+
+            return;
+        }
+
         $testAccessToken = 'ScopedSampleToken';
 
         HttpClientOffline::fixture('/user/info', function (HttpResponse $res) use ($testAccessToken) {
@@ -91,8 +93,5 @@ class ResourceProviderTest extends TestCase
         self::assertInstanceOf(AccessToken::class, $accessToken = $provider->getStoredAccessToken());
 
         self::assertEquals($testAccessToken, $accessToken->getToken());
-
-        // rollback
-        $this->useLiveApi = $oringUseLiveApi;
     }
 }

@@ -134,4 +134,24 @@ trait MockerTrait
             'httpClient' => new HttpClientOffline()
         ]);
     }
+
+    /**
+     * @return ResourceProviderInterface
+     */
+    public function createValidTokenResourceProvider()
+    {
+        return $this->createResourceProvider([
+            'access_token' => 'ScopedSampleToken'
+        ]);
+    }
+
+    /**
+     * @return ResourceProviderInterface
+     */
+    public function create404TokenResourceProvider()
+    {
+        return $this->createResourceProvider([
+            'access_token' => 'ScopedSampleToken404'
+        ]);
+    }
 }

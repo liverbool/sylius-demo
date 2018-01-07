@@ -1,0 +1,45 @@
+{
+  "page": 1,
+  "limit": 10,
+  "pages": 1,
+  "total": 2,
+  "_links": {
+    "self": {
+      "href": "\/api\/v1\/currencies\/?page=1&limit=10"
+    },
+    "first": {
+      "href": "\/api\/v1\/currencies\/?page=1&limit=10"
+    },
+    "last": {
+      "href": "\/api\/v1\/currencies\/?page=1&limit=10"
+    }
+  },
+  "_embedded": {
+    "items": [
+      {
+        "name": "TOR",
+        "id": 1,
+        "code": "TOR",
+        "symbol": "Ŧ",
+        "_resource": "currency",
+        "_links": {
+          "self": {
+            "href": "\/api\/v1\/currencies\/1"
+          }
+        }
+      },
+      {
+        "name": "บาท",
+        "id": 2,
+        "code": "THB",
+        "symbol": "฿",
+        "_resource": "currency",
+        "_links": {
+          "self": {
+            "href": "\/api\/v1\/currencies\/2"
+          }
+        }
+      }
+    ]
+  }
+}
