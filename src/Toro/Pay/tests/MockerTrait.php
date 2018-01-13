@@ -20,8 +20,10 @@ use Toro\Pay\Provider\ResourceProviderInterface;
  */
 trait MockerTrait
 {
-    protected $useLiveApi = false;
+    protected $sampleValidToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6ImQ4YjA3N2M2Nzg0MjQ3ODUxMmEwMjFlMTg0MDVmZGZkZGY5MjI1MzI1NjQwYjI1MmExMzExNzg1N2U0MDQzNDFiOGM1M2M1NTVlNTdhODdhIn0.eyJhdWQiOiJkZW1vX2NsaWVudCIsImp0aSI6ImQ4YjA3N2M2Nzg0MjQ3ODUxMmEwMjFlMTg0MDVmZGZkZGY5MjI1MzI1NjQwYjI1MmExMzExNzg1N2U0MDQzNDFiOGM1M2M1NTVlNTdhODdhIiwiaWF0IjoxNTE1ODI0NzMxLCJuYmYiOjE1MTU4MjQ3MzEsImV4cCI6MTUxNTgyODMzMSwic3ViIjoiMSIsInNjb3BlcyI6eyJwcm9maWxlIjoicHJvZmlsZSIsImVtYWlsIjoiZW1haWwiLCJjb2luX2luZm8iOiJjb2luX2luZm8ifX0.kLXhDUptYrRhospvIJn1t_RiSWBsSUo-851X5yIz9Or9ROu2NGs9v_N380d3Rp_zxYr1TTQdvtE_QJDSumr1bq5Yqt9WkrMO5HFwod5b5Em0ZK0Iu8m-axhQJIQMLtzhkXrsci2myEGTzl5i2xcFGC4chxr-LxvvqmqLh2uVZaor0d29DEb9fRJInNHblCkUhnNldqXEKxFp1hXFeTnN-w4Cc1iEzrVLe5dnrzfgBFQuQiO9wquPOTxhgM-ePyzm6U8LsYWJUJ6kywlMPZyyslFsCCa0Jm8I0Mhoo-pZmbCWUMXNCjcV45DHXW0z3t4vGcQVHmZoMadDKM7H1FSVcs4Kg7eCtQpJ9Kxf4qh90Jvhmu5N05AmBATRR0aPTNrLyRgfN5TmtsuMLtPNf_7yc8gLnzrSpOjlKnw90fNFwypvdBqYy2WpDpaka2qqiW5rY2-Jluwg1sfrd-nukMn-__WidaaTAFmXwVrKA3nSYcSYi3hDrnEBgle7mpllE6yuaU65jYp0gIOQ8tF5vsQe1TZSS7RiyjmluyoHDYIAi8scRpwmN8tgp05en7HUts8xkk_8Fu0D4eCHgDiiKrKtAMHeU3vHWgBTlu-zMOKr_rHcyDeNG6D9Yr6wO9LFFH9nglI512D2UVJbMnfHgEAeS7HE1jZh2IpExXRPGp4zc5s';
+    protected $sampleValidToken404 = '';
 
+    protected $useLiveApi = true;
     protected function createSymfonyUser()
     {
         return $this->getMockBuilder(SymfonyUserInterface::class)->getMock();
@@ -90,7 +92,7 @@ trait MockerTrait
     protected function createOwnerProvider(?string $token = null)
     {
         $token = new AccessToken([
-            'access_token' => $token ?? 'SampleToken',
+            'access_token' => $token ?? $this->sampleValidToken,
         ]);
 
         $mock = $this->getMockBuilder(OwnerProviderInterface::class)->getMock();
@@ -141,7 +143,7 @@ trait MockerTrait
     public function createValidTokenResourceProvider()
     {
         return $this->createResourceProvider([
-            'access_token' => 'ScopedSampleToken'
+            'access_token' => $this->sampleValidToken
         ]);
     }
 
@@ -151,7 +153,7 @@ trait MockerTrait
     public function create404TokenResourceProvider()
     {
         return $this->createResourceProvider([
-            'access_token' => 'ScopedSampleToken404'
+            'access_token' => $this->sampleValidToken404
         ]);
     }
 }

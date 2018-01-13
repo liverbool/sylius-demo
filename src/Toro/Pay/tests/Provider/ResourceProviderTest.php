@@ -47,7 +47,7 @@ class ResourceProviderTest extends TestCase
         });
 
         $owner = $this->createResourceProvider()
-            ->getResourceOwner($this->createAccessToken('ScopedSampleToken'));
+            ->getResourceOwner($this->createAccessToken($this->sampleValidToken));
 
         self::assertTrue(!empty($owner->getId()));
     }
@@ -60,13 +60,13 @@ class ResourceProviderTest extends TestCase
             return;
         }
 
-        $testAccessToken = 'ScopedSampleToken';
+        $testAccessToken = $this->sampleValidToken;
 
         HttpClientOffline::fixture('/user/info', function (HttpResponse $res) use ($testAccessToken) {
             return $res->withJson('user_info.json');
         });
 
-        HttpClientOffline::fixture('/oauth/v2/token', function (HttpResponse $res) use ($testAccessToken) {
+        HttpClientOffline::fixture('/oauth/token', function (HttpResponse $res) use ($testAccessToken) {
             return $res->withData(['access_token' => $testAccessToken]);
         });
 

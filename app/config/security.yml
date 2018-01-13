@@ -81,7 +81,7 @@ security:
             anonymous: true
             oauth:
                 resource_owners:
-                    torocoin: "/connect/login/check-torocoin"
+                    toropay: "/connect/login/check-toropay"
                 login_path: "/%locale%/login"
                 use_forward: false
                 failure_path: "/%locale%/login"

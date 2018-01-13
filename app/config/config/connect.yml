@@ -1,13 +1,13 @@
 hwi_oauth:
     firewall_names: [shop]
     resource_owners:
-        torocoin:
+        toropay:
             type: oauth2
             client_id: demo_client
             client_secret: secret_demo_client
-            access_token_url: http://d860913e.ngrok.io/oauth/v2/token
-            authorization_url: http://d860913e.ngrok.io/oauth/v2/auth
-            infos_url: http://d860913e.ngrok.io/api/v1/user/info
+            access_token_url: http://bb56f913.ngrok.io/oauth/token
+            authorization_url: http://bb56f913.ngrok.io/oauth/authorize
+            infos_url: http://bb56f913.ngrok.io/api/v1/user/info
             scope: profile email coin_info
             user_response_class: HWI\Bundle\OAuthBundle\OAuth\Response\PathUserResponse
             options:

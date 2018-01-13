@@ -29,6 +29,11 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
      */
     protected $ownerProvider;
 
+    /**
+     * @var string
+     */
+    protected $userAgent;
+
     public function __construct(array $options = [], array $collaborators = [])
     {
         $resolver = new OptionsResolver();
@@ -48,11 +53,12 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
 
         $resolver->setDefault('sandbox', true);
         $resolver->setDefault('apiVersion', 'v1');
+        $resolver->setDefault('userAgent', sprintf('%s/%s', ToroPay::SERVICE_NAME, ToroPay::VERSION));
         $resolver->setDefault('urlAuthorize', function (Options $options) {
-            return $this->getBaseUrl($options) . '/oauth/v2/auth';
+            return $this->getBaseUrl($options) . '/oauth/authorize';
         });
         $resolver->setDefault('urlAccessToken', function (Options $options) {
-            return $this->getBaseUrl($options) . '/oauth/v2/token';
+            return $this->getBaseUrl($options) . '/oauth/token';
         });
         $resolver->setDefault('urlResourceOwnerDetails', function (Options $options) {
             return $this->getBaseUrl($options) . sprintf('/api/%s/user/info', $options['apiVersion']);
@@ -74,6 +80,7 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
         $resolver->setAllowedTypes('urlAccessToken', 'string');
         $resolver->setAllowedTypes('urlResourceOwnerDetails', 'string');
         $resolver->setAllowedTypes('urlResource', 'string');
+        $resolver->setAllowedTypes('userAgent', 'string');
         $resolver->setAllowedTypes('ownerProvider', OwnerProviderInterface::class);
 
         $resolver->setAllowedValues('redirectUri', function ($value) {
@@ -188,7 +195,9 @@ class ResourceProvider extends GenericProvider implements ResourceProviderInterf
             $response = $this->getResponse(
                 $this->getAuthenticatedRequest($method, $uri, $accessToken, [
                     'body' => !empty($data) ? json_encode($data) : null,
-                    'headers' => $headers,
+                    'headers' => array_replace_recursive([
+                        'User-Agent' => $this->userAgent,
+                    ], $headers),
                 ])
             );
         } catch (ClientException $e) {
