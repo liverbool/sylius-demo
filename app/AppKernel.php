@@ -36,8 +36,8 @@ class AppKernel extends Kernel
 
             new \AppBundle\AppBundle(),
 
-            new Http\HttplugBundle\HttplugBundle(),
-            new HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
+            new \Http\HttplugBundle\HttplugBundle(),
+            new \HWI\Bundle\OAuthBundle\HWIOAuthBundle(),
         ];
 
         return array_merge(parent::registerBundles(), $bundles);

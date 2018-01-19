@@ -26,7 +26,10 @@
         "hwi/oauth-bundle": "^0.6.0",
         "php-http/guzzle6-adapter": "^1.1",
         "php-http/httplug-bundle": "^1.8",
-        "phpmob/omise": "dev-master"
+        "phpmob/omise": "dev-master",
+
+        "toropay/payum": "1.0.x-dev",
+        "toropay/payapi-php": "1.0.x-dev"
     },
     "require-dev": {
         "behat/behat": "^3.2",
@@ -72,11 +75,10 @@
     "autoload": {
         "psr-4": {
             "Dos\\SyliusOmisePlugin\\": "src/Dos/SyliusOmisePlugin/src",
-            "Dos\\Payum\\Omise\\": "src/Dos/Payum/Omise",
+            "Dos\\Payum\\": "src/Dos/Payum",
             "Toro\\SyliusToroPayPlugin\\": "src/Toro/SyliusToroPayPlugin/src",
-            "Toro\\Pay\\": "src/Toro/Pay/src",
-            "Toro\\Payum\\": "src/Toro/Payum/src",
-            "AppBundle\\": "src/AppBundle/"
+            "AppBundle\\": "src/AppBundle/",
+            "Bugfix\\": "src/Bugfix/"
         },
         "classmap": ["app/AppKernel.php", "app/AppCache.php"]
     },

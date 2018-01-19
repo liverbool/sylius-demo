@@ -1,1 +1,6 @@
-services: ~
+services:
+    # https://github.com/Sylius/Sylius/pull/7464
+    bugfix.oauth.user_provider:
+        class: Bugfix\UserProvider
+        parent: sylius.oauth.user_provider
+        decorates: sylius.oauth.user_provider

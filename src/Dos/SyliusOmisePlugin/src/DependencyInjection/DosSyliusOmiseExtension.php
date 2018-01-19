@@ -41,7 +41,7 @@ final class DosSyliusOmiseExtension extends Extension implements PrependExtensio
         $config = $this->processConfiguration(new Configuration(), $configs);
         $payumConfigs = $container->getExtensionConfig('payum');
         $payumCoreConfigs = $payumConfigs[0]['gateways']['core'] ?? [];
-        $payumCoreConfigs = array_merge_recursive($payumCoreConfigs, [
+        $payumCoreConfigs = array_replace_recursive($payumCoreConfigs, [
             'omise_supported_banks' => empty($config['supported_banks']) ? null : $config['supported_banks'],
             'payum.omise.credit_card_template' => $config['credit_card_template'],
         ]);

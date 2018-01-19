@@ -5,13 +5,12 @@ hwi_oauth:
             type: oauth2
             client_id: demo_client
             client_secret: secret_demo_client
-            access_token_url: http://bb56f913.ngrok.io/oauth/token
-            authorization_url: http://bb56f913.ngrok.io/oauth/authorize
-            infos_url: http://bb56f913.ngrok.io/api/v1/user/info
-            scope: profile email coin_info
+            access_token_url: http://8db878c2.ngrok.io/oauth/token
+            authorization_url: http://8db878c2.ngrok.io/oauth/authorize
+            infos_url: http://8db878c2.ngrok.io/api/v1/user/info
+            scope: profile email wallet_info wallet_charge
             user_response_class: HWI\Bundle\OAuthBundle\OAuth\Response\PathUserResponse
-            options:
-                csrf: true
+            options: { csrf: true }
             paths:
                 identifier: username
                 nickname: username

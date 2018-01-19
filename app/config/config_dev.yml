@@ -28,3 +28,8 @@ swiftmailer:
 web_profiler:
     toolbar: true
     intercept_redirects: false
+
+httplug:
+    profiling:
+        enabled: true
+        captured_body_length: 1000

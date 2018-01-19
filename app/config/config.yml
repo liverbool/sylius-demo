@@ -65,4 +65,12 @@ fos_rest:
             - { path: '^/api', priorities: ['json', 'xml'], fallback_format: json, prefer_extension: true }
             - { path: '^/', stop: true }
 
-sylius_toro_pay: ~
+httplug:
+    plugins:
+        logger: ~
+    clients:
+        guzzle:
+            factory: 'httplug.factory.guzzle6'
+            plugins: ['httplug.plugin.logger']
+            config:
+                timeout: 30

@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service class="Payum\Core\Bridge\Symfony\Builder\GatewayFactoryBuilder">
+            <argument type="string">Toro\Payum\GatewayFactory</argument>
+            <tag name="payum.gateway_factory_builder" factory="toropay"/>
+        </service>
+        <service class="Toro\SyliusToroPayPlugin\Form\Type\GatewayConfigurationType">
+            <tag name="sylius.gateway_configuration_type" type="toropay" label="Toro Pay"/>
+            <tag name="form.type"/>
+        </service>
+        <service class="Toro\SyliusToroPayPlugin\Action\FlashDisplayErrorAction">
+            <argument type="service" id="session.flash_bag" on-invalid="null"/>
+            <tag name="payum.action" factory="toropay"/>
+        </service>
+        <service class="Toro\Pay\ToroPay">
+            <tag name="payum.api" factory="toropay" alias="toropay-api"/>
+            <factory method="createApi">
+                <service class="Toro\SyliusToroPayPlugin\Factory\ApiBuilderFactory">
+                    <argument type="service" id="sylius.repository.gateway_config"/>
+                </service>
+            </factory>
+            <argument type="service">
+                <service class="Toro\Pay\Bridge\Sylius\OwnerProvider">
+                    <argument type="service" id="security.token_storage"/>
+                </service>
+            </argument>
+            <argument type="service" id="toropay.http.client"/>
+        </service>
+    </services>
+</container>

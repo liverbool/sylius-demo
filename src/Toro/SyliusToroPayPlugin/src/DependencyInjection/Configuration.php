@@ -16,6 +16,17 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sylius_toro_pay');
+        $rootNode
+            ->children()
+                ->arrayNode('http')
+                ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('client')->defaultValue('httplug.client.default')->end()
+                        ->scalarNode('message_factory')->defaultValue('httplug.message_factory.default')->end()
+                    ->end()
+                ->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
