@@ -14,7 +14,12 @@
             <tag name="form.type"/>
         </service>
         <service class="Toro\SyliusToroPayPlugin\Action\FlashDisplayErrorAction">
+            <argument type="service" id="security.token_storage"/>
             <argument type="service" id="session.flash_bag" on-invalid="null"/>
+            <tag name="payum.action" factory="toropay"/>
+        </service>
+        <service class="Toro\SyliusToroPayPlugin\Action\ToroConnectAction">
+            <argument>%toropay.connect_uri%</argument>
             <tag name="payum.action" factory="toropay"/>
         </service>
         <service class="Toro\Pay\ToroPay">
