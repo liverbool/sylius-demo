@@ -19,7 +19,9 @@
             <tag name="payum.action" factory="toropay"/>
         </service>
         <service class="Toro\SyliusToroPayPlugin\Action\ToroConnectAction">
+            <argument type="service" id="session"/>
             <argument>%toropay.connect_uri%</argument>
+            <argument>%toropay.firewall%</argument>
             <tag name="payum.action" factory="toropay"/>
         </service>
         <service class="Toro\Pay\ToroPay">

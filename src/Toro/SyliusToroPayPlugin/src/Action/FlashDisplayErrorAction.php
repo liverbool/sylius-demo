@@ -56,7 +56,7 @@ class FlashDisplayErrorAction implements ActionInterface, GatewayAwareInterface
         $error = $request->getError();
 
         // TODO should error.isNotLogin
-        if ($error->isAccessDenied() && !$this->isAuthenticated()) {
+        if ($error->isAccessDenied()) {
             $model = ArrayObject::ensureArrayObject($request->getModel());
 
             $this->gateway->execute(new ToroConnectRequest($model));

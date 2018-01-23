@@ -22,6 +22,7 @@ final class SyliusToroPayExtension extends Extension
         $loader = new XmlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 
         $container->setParameter('toropay.connect_uri', $config['connect_uri']);
+        $container->setParameter('toropay.firewall', $config['firewall']);
 
         $this->createHttplugClient($container, $config);
 

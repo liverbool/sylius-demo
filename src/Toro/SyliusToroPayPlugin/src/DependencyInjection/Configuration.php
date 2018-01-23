@@ -20,6 +20,7 @@ final class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('connect_uri')->defaultValue('/connect/toropay')->cannotBeEmpty()->end()
+                ->scalarNode('firewall')->defaultValue('shop')->cannotBeEmpty()->end()
             ->end()
             ->children()
                 ->arrayNode('http')

@@ -109,3 +109,4 @@ security:
         - { path: "%sylius.security.admin_regex%", role: ROLE_ADMINISTRATION_ACCESS }
         - { path: "%sylius.security.api_regex%/.*", role: ROLE_API_ACCESS }
         - { path: "%sylius.security.shop_regex%/account", role: ROLE_USER }
+        #- { path: "%sylius.security.shop_regex%/checkout", role: ROLE_USER }
